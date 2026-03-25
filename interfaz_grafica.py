@@ -1,76 +1,75 @@
 #Aquí voy a empezar con la interfaz grafica, voy a hacer clases para cada ventana
 
-import tkinter as tk
-from tkinter.ttk import Style
-
+import sys
 import requests
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
+    QListWidget, QLabel, QLineEdit, QMainWindow
+)
+from PyQt6.QtCore import Qt
 
-class Styles:
-    BG_MAIN = "maroon"
-    TITLE = {
-        "bg": "maroon",
-        "fg": "gold",
-        "font": ("Impact", 48)
-    }
-
-    BOTONES = {
-        "bg": "gold",
-        "fg": "black",
-        "font": ("Impact", 20),
-        "width": 20,
-        "height": 1
-    }
-
-class ComicsView(tk.Toplevel):
-    def __init__(self, master):
-        super().__init__(master)
-        self.title("Listado de Comics")
-        self.state("zoomed")
-        self.config(bg=Styles.BG_MAIN)
+class ComicsView(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Listado de Comics")
+        self.showMaximized()
 
         self.datos = []
         self.datos_filtrados = []
         self.pagina = 0
         self.por_pagina = 10
 
-        self.entrada = tk.Entry(self, font=("Arial", 20))
-        self.entrada.pack(pady=10)
+        layout = QVBoxLayout()
 
-        tk.Button(self, text="Buscar", **Styles.BOTONES, command=self.buscar).pack()
+        self.entrada = QLineEdit()
+        self.entrada.setPlaceholderText("Buscar...")
+        layout.addWidget(self.entrada)
 
-        frame_orden = tk.Frame(self)
-        frame_orden.pack(pady=5)
+        btn_buscar = QPushButton("Buscar")
+        btn_buscar.clicked.connect(self.buscar)
+        layout.addWidget(btn_buscar)
 
-        tk.Button(frame_orden, text="Ordenar por Nombre", **Styles.BOTONES, command=self.ordenar_nombre).pack(side="left", padx=5)
-        tk.Button(frame_orden, text="Ordenar por Año", **Styles.BOTONES, command=self.ordenar_anio).pack(side="left", padx=5)
+        layout_orden = QHBoxLayout()
 
-        frame_lista = tk.Frame(self)
-        frame_lista.pack(pady=10)
+        btn_nombre = QPushButton("Ordenar por Nombre")
+        btn_nombre.clicked.connect(self.ordenar_nombre)
 
-        scrollbar = tk.Scrollbar(frame_lista)
-        scrollbar.pack(side="right", fill="y")
+        btn_anio = QPushButton("Ordenar por Año")
+        btn_anio.clicked.connect(self.ordenar_anio)
 
-        self.lista = tk.Listbox(frame_lista, width=100, height=20, yscrollcommand=scrollbar.set)
-        self.lista.pack(side="left")
+        layout_orden.addWidget(btn_nombre)
+        layout_orden.addWidget(btn_anio)
 
-        scrollbar.config(command=self.lista.yview)
+        layout.addLayout(layout_orden)
 
-        self.lista.bind("<<ListboxSelect>>", self.mostrar_detalle)
+        self.lista = QListWidget()
+        self.lista.itemSelectionChanged.connect(self.mostrar_detalle)
+        layout.addWidget(self.lista)
 
-        self.detalle = tk.Label(self, text="", justify="left", wraplength=800)
-        self.detalle.pack(pady=10)
+        self.detalle = QLabel("")
+        self.detalle.setWordWrap(True)
+        layout.addWidget(self.detalle)
 
-        frame_nav = tk.Frame(self)
-        frame_nav.pack(pady=10)
+        layout_nav = QHBoxLayout()
 
-        tk.Button(frame_nav, text="Anterior", **Styles.BOTONES, command=self.anterior).pack(side="left", padx=10)
-        tk.Button(frame_nav, text="Siguiente", **Styles.BOTONES, command=self.siguiente).pack(side="left", padx=10)
+        btn_ant = QPushButton("Anterior")
+        btn_ant.clicked.connect(self.anterior)
 
-        self.label_pagina = tk.Label(frame_nav, text="Página 1")
-        self.label_pagina.pack(side="left", padx=10)
+        btn_sig = QPushButton("Siguiente")
+        btn_sig.clicked.connect(self.siguiente)
+
+        self.label_pagina = QLabel("Página 1")
+
+        layout_nav.addWidget(btn_ant)
+        layout_nav.addWidget(btn_sig)
+        layout_nav.addWidget(self.label_pagina)
+
+        layout.addLayout(layout_nav)
+
+        self.setLayout(layout)
 
     def buscar(self):
-        query = self.entrada.get().strip()
+        query = self.entrada.text().strip()
         if not query:
             return
 
@@ -90,22 +89,22 @@ class ComicsView(tk.Toplevel):
             print("Error:", e)
 
     def mostrar_pagina(self):
-        self.lista.delete(0, tk.END)
+        self.lista.clear()
 
         inicio = self.pagina * self.por_pagina
         fin = inicio + self.por_pagina
         subset = self.datos_filtrados[inicio:fin]
 
         if not subset:
-            self.lista.insert(tk.END, "No hay resultados")
+            self.lista.addItem("No hay resultados")
             return
 
         for comic in subset:
             titulo = comic.get("title", "")
             anio = comic.get("yearPage", "")
-            self.lista.insert(tk.END, f"{titulo} ({anio})")
+            self.lista.addItem(f"{titulo} ({anio})")
 
-        self.label_pagina.config(text=f"Página {self.pagina + 1}")
+        self.label_pagina.setText(f"Página {self.pagina + 1}")
 
     def siguiente(self):
         if (self.pagina + 1) * self.por_pagina < len(self.datos_filtrados):
@@ -127,13 +126,11 @@ class ComicsView(tk.Toplevel):
         self.pagina = 0
         self.mostrar_pagina()
 
-    def mostrar_detalle(self, event):
-        seleccion = self.lista.curselection()
-        if not seleccion:
-            return
+    def mostrar_detalle(self):
+        seleccion = self.lista.currentRow()
+        index = seleccion + (self.pagina * self.por_pagina)
 
-        index = seleccion[0] + (self.pagina * self.por_pagina)
-        if index >= len(self.datos_filtrados):
+        if index >= len(self.datos_filtrados) or seleccion < 0:
             return
 
         comic = self.datos_filtrados[index]
@@ -144,41 +141,55 @@ Serie: {comic.get('seriesName')}
 Número: {comic.get('issueNumber')}
 Año: {comic.get('yearPage')}
 """
-        self.detalle.config(text=info)
+        self.detalle.setText(info)
 
-class App(tk.Tk):
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.state("zoomed")
-        self.title('Mundo Comic')
-        self.config(bg=Styles.BG_MAIN)
+        self.setWindowTitle("Mundo Comic")
 
-        self.label = tk.Label(self, text='Mundo Comic', **Styles.TITLE)
-        self.label.pack(pady=20)
+        central = QWidget()
+        layout = QVBoxLayout()
 
-        self.boton = tk.Button(
-            self,
-            text="Comics Disponibles",
-            command=lambda: ComicsView(self),
-            **Styles.BOTONES
-        )
-        self.boton.pack(pady=10)
+        titulo = QLabel("Mundo Comic")
+        titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        titulo.setStyleSheet("font-size: 40px; color: gold;")
+        layout.addWidget(titulo)
 
-        self.boton2 = tk.Button(
-            self,
-            text="Comics de Personajes",
-            command=self.abrir_comics_personajes,
-            **Styles.BOTONES
-        )
-        self.boton2.pack(pady=10)
+        btn1 = QPushButton("Comics Disponibles")
+        btn1.clicked.connect(self.abrir_comics)
+        btn1.setFixedSize(300,50)
+        layout.addWidget(btn1)
 
-    def abrir_comics_personajes(self):
-        ventana = tk.Toplevel(self)
-        ventana.title("Comics de Personajes")
-        ventana.state("zoomed")
-        ventana.config(bg=Styles.BG_MAIN)
+        btn2 = QPushButton("Comics de Personajes")
+        btn2.clicked.connect(self.abrir_personajes)
+        btn2.setFixedSize(300, 50)
+        layout.addWidget(btn2)
 
-        label = tk.Label(ventana, text="Aquí van los comics por personaje", **Styles.TITLE)
-        label.pack(pady=20)
+        central.setLayout(layout)
+        self.setCentralWidget(central)
 
-App().mainloop()
+    def abrir_comics(self):
+        self.ventana = ComicsView()
+        self.ventana.show()
+
+    def abrir_personajes(self):
+        ventana = QWidget()
+        ventana.setWindowTitle("Comics de Personajes")
+        ventana.showMaximized()
+
+        layout = QVBoxLayout()
+        label = QLabel("Aquí van los comics por personaje")
+        layout.addWidget(label)
+
+        ventana.setLayout(layout)
+        self.ventana2 = ventana
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    window.showMaximized()
+    sys.exit(app.exec())
