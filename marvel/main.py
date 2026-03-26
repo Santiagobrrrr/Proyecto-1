@@ -10,11 +10,15 @@ def prueba_comics():
     print(f"Comics obtenidos desde API: {len(comics)}")
 
     for i, comic in enumerate(comics, start=1):
+        nombres_creadores = ", ".join([c.nombre for c in comic.creadores[:3]])
+        if not nombres_creadores:
+            nombres_creadores = "Sin creadores"
+
         print(
             f"{i}. {comic.nombre} | "
             f"Editorial: {comic.editorial} | "
-            f"Volumen: {comic.volumen} | "
-            f"Fecha: {comic.fecha_publicacion}"
+            f"Fecha: {comic.fecha_publicacion} | "
+            f"Creadores: {nombres_creadores}"
         )
 
     comics_json = service.cargar_comics_desde_json()

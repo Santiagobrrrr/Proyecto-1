@@ -67,7 +67,56 @@
         "url_detalle": "https://comicvine.gamespot.com/ultimate-spider-man-epic-collection-hunted-1-volum/4000-1160343/",
         "personajes": [],
         "editorial": "Marvel",
-        "creadores": []
+        "creadores": [
+            {
+                "id": 3713,
+                "nombre": "Art Thibert",
+                "rol": "inker, cover",
+                "imagen_url": ""
+            },
+            {
+                "id": 40435,
+                "nombre": "Brian Michael Bendis",
+                "rol": "writer",
+                "imagen_url": ""
+            },
+            {
+                "id": 43193,
+                "nombre": "C.B. Cebulski",
+                "rol": "editor",
+                "imagen_url": ""
+            },
+            {
+                "id": 10384,
+                "nombre": "Chris Eliopoulos",
+                "rol": "letterer",
+                "imagen_url": ""
+            },
+            {
+                "id": 7995,
+                "nombre": "Dave Sharpe",
+                "rol": "letterer",
+                "imagen_url": ""
+            },
+            {
+                "id": 49864,
+                "nombre": "Erik Benson",
+                "rol": "inker",
+                "imagen_url": ""
+            },
+            {
+                "id": 2123,
+                "nombre": "Mark Bagley",
+                "rol": "penciler, cover",
+                "imagen_url": ""
+            },
+            {
+                "id": 6696,
+                "nombre": "Transparency Digital",
+                "rol": "colorist, cover",
+                "imagen_url": ""
+            }
+        ]
     },
     {
         "id": 1160353,

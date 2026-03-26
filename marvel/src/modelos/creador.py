@@ -23,3 +23,12 @@ class Creador:
             rol=data.get("rol", ""),
             imagen_url=data.get("imagen_url", "")
         )
+
+    @classmethod
+    def from_api(cls, data):
+        return cls(
+            id=data.get("id"),
+            nombre=data.get("name", "") or "Sin nombre",
+            rol=data.get("role", "") or "",
+            imagen_url=""
+        )

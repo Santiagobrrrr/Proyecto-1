@@ -63,3 +63,12 @@ class ComicVineClient:
             "field_list": "id,name,publisher"
         }
         return self._get(f"volume/4050-{volume_id}", params)
+
+    def get_issue_detail(self, issue_id):
+        params = {
+            "field_list": (
+                "id,name,issue_number,deck,description,store_date,cover_date,image,"
+                "volume,site_detail_url,person_credits"
+            )
+        }
+        return self._get(f"issue/4000-{issue_id}", params)

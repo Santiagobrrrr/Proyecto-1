@@ -1,5 +1,6 @@
 from src.api.comic_vine import ComicVineClient
 from src.modelos.comic import Comic
+from src.modelos.creador import Creador
 from src.servicios.almacenamiento import AlmacenamientoService
 from src.estructura_datos.lista_simple import ListaSimple
 from config import ITEMS_PER_PAGE
@@ -15,7 +16,7 @@ class ComicService:
 
         batch_size = 20
         current_offset = offset
-        max_batches = 5  # evita demasiadas requests
+        max_batches = 5
 
         for _ in range(max_batches):
             data = self.client.list_issues(limit=batch_size, offset=current_offset)
@@ -39,7 +40,14 @@ class ComicService:
                     nombre_editorial = (publisher.get("name") or "").strip()
 
                     if nombre_editorial.lower() == "marvel":
-                        comic = Comic.from_api(item, editorial=nombre_editorial)
+                        detail_data = self.client.get_issue_detail(issue_id)
+                        detail_result = detail_data.get("results", {}) or {}
+
+                        comic = Comic.from_api(detail_result, editorial=nombre_editorial)
+
+                        person_credits = detail_result.get("person_credits", []) or []
+                        comic.creadores = [Creador.from_api(persona) for persona in person_credits]
+
                         comics.append(comic)
                         ids_agregados.add(issue_id)
 
@@ -47,7 +55,7 @@ class ComicService:
                             return comics
 
                 except Exception as e:
-                    print(f"No se pudo validar editorial para volumen {volume_id}: {e}")
+                    print(f"No se pudo procesar issue {issue_id}: {e}")
 
             current_offset += batch_size
 
