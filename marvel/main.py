@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from config import validate_config
-from src.ui.main_window import MainWindow
+from src.ui.interfaz_grafica import MainWindow
 
 
 if __name__ == "__main__":
