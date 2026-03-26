@@ -10,6 +10,8 @@ from PyQt6.QtWidgets import (
 from src.servicios.comic_s import ComicService
 from src.servicios.personaje_s import PersonajeService
 from src.ui.interfaz import ComicCard, CharacterCard, clear_layout, load_pixmap_from_url
+from src.estructura_datos.lista_doble import ListaDoble
+from src.estructura_datos.lista_circular import ListaCircular
 
 
 class ComicsPage(QWidget):
@@ -21,6 +23,7 @@ class ComicsPage(QWidget):
         self.pagina_actual = 1
         self.por_pagina = 10
         self.items_pagina = []
+        self.historial = ListaDoble()
 
         self._build_ui()
         self.cargar_datos()
@@ -121,6 +124,21 @@ class ComicsPage(QWidget):
 
         root.addLayout(left, 3)
         root.addWidget(right_card, 2)
+
+        hist_nav = QHBoxLayout()
+
+        self.btn_hist_prev = QPushButton("← Anterior visto")
+        self.btn_hist_prev.setObjectName("secondaryButton")
+        self.btn_hist_prev.clicked.connect(self.ver_historial_anterior)
+
+        self.btn_hist_next = QPushButton("Siguiente visto →")
+        self.btn_hist_next.setObjectName("secondaryButton")
+        self.btn_hist_next.clicked.connect(self.ver_historial_siguiente)
+
+        hist_nav.addWidget(self.btn_hist_prev)
+        hist_nav.addWidget(self.btn_hist_next)
+
+        right.addLayout(hist_nav)
 
     def cargar_datos(self):
         comics = self.service.cargar_comics_desde_json()
@@ -226,7 +244,15 @@ class ComicsPage(QWidget):
         self.btn_prev.setEnabled(self.pagina_actual > 1)
         self.btn_next.setEnabled(self.pagina_actual < total_paginas)
 
-    def mostrar_detalle(self, comic):
+    def mostrar_detalle(self, comic, guardar_historial=True):
+        if guardar_historial:
+            ultimo = self.historial.cola.dato if self.historial.cola is not None else None
+
+            if ultimo is None or ultimo.id != comic.id:
+                self.historial.agregar_y_mover_actual(comic)
+            else:
+                self.historial.actual = self.historial.cola
+
         creadores = ", ".join([c.nombre for c in comic.creadores[:4]]) or "Sin creadores"
 
         self.detail_image.setPixmap(load_pixmap_from_url(comic.imagen_url, 260, 340))
@@ -238,6 +264,16 @@ class ComicsPage(QWidget):
             f"<b>Creadores:</b> {creadores}"
         )
         self.detail_desc.setHtml(comic.descripcion or comic.descripcion_corta or "Sin descripción disponible.")
+
+    def ver_historial_anterior(self):
+        comic = self.historial.mover_anterior()
+        if comic is not None:
+            self.mostrar_detalle(comic, guardar_historial=False)
+
+    def ver_historial_siguiente(self):
+        comic = self.historial.mover_siguiente()
+        if comic is not None:
+            self.mostrar_detalle(comic, guardar_historial=False)
 
     def pagina_siguiente(self):
         self.pagina_actual += 1
@@ -258,6 +294,7 @@ class PersonajesPage(QWidget):
         self.por_pagina = 10
         self.items_pagina = []
         self.filtro_rapido = "todos"
+        self.carrusel = ListaCircular()
 
         self._build_ui()
         self.cargar_datos()
@@ -361,6 +398,25 @@ class PersonajesPage(QWidget):
         right_card.setObjectName("detailCard")
         right = QVBoxLayout(right_card)
 
+        carrusel_bar = QHBoxLayout()
+
+        self.lbl_destacado = QLabel("Destacado: sin datos")
+        self.lbl_destacado.setWordWrap(True)
+
+        self.btn_next_destacado = QPushButton("Siguiente destacado")
+        self.btn_next_destacado.setObjectName("chipButton")
+        self.btn_next_destacado.clicked.connect(self.siguiente_destacado)
+
+        self.btn_reset_destacado = QPushButton("Reiniciar carrusel")
+        self.btn_reset_destacado.setObjectName("chipButton")
+        self.btn_reset_destacado.clicked.connect(self.reset_destacado)
+
+        carrusel_bar.addWidget(self.lbl_destacado, 1)
+        carrusel_bar.addWidget(self.btn_next_destacado)
+        carrusel_bar.addWidget(self.btn_reset_destacado)
+
+        right.addLayout(carrusel_bar)
+
         self.detail_image = QLabel("Sin imagen")
         self.detail_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -440,6 +496,34 @@ class PersonajesPage(QWidget):
         self.filtrados = filtrados
         self.pagina_actual = 1
         self.mostrar_pagina()
+        self.construir_carrusel()
+
+    def construir_carrusel(self):
+        self.carrusel = ListaCircular()
+
+        for personaje in self.filtrados[:10]:
+            self.carrusel.append(personaje)
+
+        self.mostrar_destacado_actual()
+
+    def mostrar_destacado_actual(self):
+        personaje = self.carrusel.current()
+        if personaje is None:
+            self.lbl_destacado.setText("Destacado: sin datos")
+            return
+
+        self.lbl_destacado.setText(f"Destacado: {personaje.nombre}")
+        self.mostrar_detalle(personaje)
+
+    def siguiente_destacado(self):
+        personaje = self.carrusel.next()
+        if personaje is not None:
+            self.lbl_destacado.setText(f"Destacado: {personaje.nombre}")
+            self.mostrar_detalle(personaje)
+
+    def reset_destacado(self):
+        self.carrusel.reset()
+        self.mostrar_destacado_actual()
 
     def mostrar_pagina(self):
         clear_layout(self.cards_layout)

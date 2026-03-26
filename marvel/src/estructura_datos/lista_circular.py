@@ -44,24 +44,14 @@ class ListaCircular:
         self.actual = self.actual.siguiente
         return self.actual.dato
 
-    def to_list(self, limite=None):
-        resultado = []
+    def reset(self):
+        self.actual = self.cabeza
 
+    def avanzar_n(self, n):
         if self.esta_vacia():
-            return resultado
+            return None
 
-        actual = self.cabeza
-        contador = 0
+        for _ in range(n):
+            self.actual = self.actual.siguiente
 
-        while True:
-            resultado.append(actual.dato)
-            actual = actual.siguiente
-            contador += 1
-
-            if actual == self.cabeza:
-                break
-
-            if limite is not None and contador >= limite:
-                break
-
-        return resultado
+        return self.actual.dato

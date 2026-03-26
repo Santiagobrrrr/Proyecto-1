@@ -9,6 +9,7 @@ class ListaDoble:
     def __init__(self):
         self.cabeza = None
         self.cola = None
+        self.actual = None
         self.tamanio = 0
 
     def esta_vacia(self):
@@ -23,6 +24,7 @@ class ListaDoble:
         if self.esta_vacia():
             self.cabeza = nuevo
             self.cola = nuevo
+            self.actual = nuevo
         else:
             nuevo.anterior = self.cola
             self.cola.siguiente = nuevo
@@ -30,18 +32,26 @@ class ListaDoble:
 
         self.tamanio += 1
 
-    def prepend(self, dato):
-        nuevo = NodoDoble(dato)
+    def agregar_y_mover_actual(self, dato):
+        self.append(dato)
+        self.actual = self.cola
 
-        if self.esta_vacia():
-            self.cabeza = nuevo
-            self.cola = nuevo
-        else:
-            nuevo.siguiente = self.cabeza
-            self.cabeza.anterior = nuevo
-            self.cabeza = nuevo
+    def actual_dato(self):
+        if self.actual is None:
+            return None
+        return self.actual.dato
 
-        self.tamanio += 1
+    def mover_anterior(self):
+        if self.actual is not None and self.actual.anterior is not None:
+            self.actual = self.actual.anterior
+            return self.actual.dato
+        return None
+
+    def mover_siguiente(self):
+        if self.actual is not None and self.actual.siguiente is not None:
+            self.actual = self.actual.siguiente
+            return self.actual.dato
+        return None
 
     def recorrer_adelante(self):
         resultado = []
@@ -62,29 +72,3 @@ class ListaDoble:
             actual = actual.anterior
 
         return resultado
-
-    def obtener_nodo_por_indice(self, indice):
-        if indice < 0 or indice >= self.tamanio:
-            raise IndexError("Índice fuera de rango")
-
-        actual = self.cabeza
-        contador = 0
-
-        while actual is not None:
-            if contador == indice:
-                return actual
-            actual = actual.siguiente
-            contador += 1
-
-    def obtener_dato_por_indice(self, indice):
-        nodo = self.obtener_nodo_por_indice(indice)
-        return nodo.dato
-
-    def to_list(self):
-        return self.recorrer_adelante()
-
-    def __iter__(self):
-        actual = self.cabeza
-        while actual is not None:
-            yield actual.dato
-            actual = actual.siguiente
