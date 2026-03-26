@@ -4,7 +4,6 @@ class NodoDoble:
         self.siguiente = None
         self.anterior = None
 
-
 class ListaDoble:
     def __init__(self):
         self.cabeza = None
