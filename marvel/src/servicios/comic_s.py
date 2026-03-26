@@ -97,3 +97,14 @@ class ComicService:
         inicio = (pagina - 1) * por_pagina
         fin = inicio + por_pagina
         return comics[inicio:fin]
+
+    def buscar_comics_api(self, query, limit=10):
+        data = self.client.search_issues(query, limit=limit)
+        resultados = data.get("results", [])
+
+        comics = []
+        for item in resultados:
+            comic = Comic.from_api(item)
+            comics.append(comic)
+
+        return comics

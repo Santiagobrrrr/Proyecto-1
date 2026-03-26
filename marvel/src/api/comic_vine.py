@@ -81,3 +81,10 @@ class ComicVineClient:
             )
         }
         return self._get(f"character/4005-{character_id}", params)
+
+    def search_issues(self, query, limit=10):
+        return self._get("search", {
+            "query": query,
+            "resources": "issue",
+            "limit": limit
+        })

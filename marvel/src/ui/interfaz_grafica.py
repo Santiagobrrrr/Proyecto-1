@@ -55,14 +55,14 @@ class ComicsPage(QWidget):
         btn_filtrar = QPushButton("Aplicar")
         btn_filtrar.clicked.connect(self.aplicar_filtros)
 
-        btn_actualizar = QPushButton("Buscar")
-        btn_actualizar.setObjectName("secondaryButton")
-        btn_actualizar.clicked.connect(self.actualizar_desde_api)
+        btn_buscar = QPushButton("Buscar")
+        btn_buscar.setObjectName("secondaryButton")
+        btn_buscar.clicked.connect(self.buscar_en_api)
 
         controls.addWidget(self.search_input, 2)
         controls.addWidget(self.sort_combo, 1)
         controls.addWidget(btn_filtrar)
-        controls.addWidget(btn_actualizar)
+        controls.addWidget(btn_buscar)
 
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
@@ -131,12 +131,39 @@ class ComicsPage(QWidget):
         self.aplicar_filtros()
 
     def actualizar_desde_api(self):
+        query = self.search_input.text().strip()
+
+        if not query:
+            QMessageBox.warning(self, "Aviso", "Escribe el nombre de un cómic.")
+            return
+
         try:
-            self.todos = self.service.guardar_comics_desde_api(limit=20)
+            self.todos = self.service.buscar_comics_api(query)
             self.aplicar_filtros()
-            QMessageBox.information(self, "Listo", "Comics actualizados desde la API.")
+
+            if not self.todos:
+                QMessageBox.information(self, "Sin resultados", f"No se encontraron cómics para: {query}")
+            else:
+                QMessageBox.information(self, "Listo", "Cómics actualizados desde la API.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo actualizar:\n{e}")
+
+    def buscar_en_api(self):
+        query = self.search_input.text().strip()
+
+        if not query:
+            QMessageBox.warning(self, "Aviso", "Escribe el nombre de un cómic.")
+            return
+
+        try:
+            self.todos = self.service.buscar_comics_api(query, limit=20)
+            self.pagina_actual = 1
+            self.aplicar_filtros()
+
+            if not self.todos:
+                QMessageBox.information(self, "Sin resultados", f"No se encontraron cómics para: {query}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo buscar:\n{e}")
 
     def aplicar_filtros(self):
         texto = self.search_input.text().strip().lower()
