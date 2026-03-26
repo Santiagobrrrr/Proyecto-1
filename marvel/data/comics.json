@@ -208,19 +208,5 @@
         "personajes": [],
         "editorial": "Marvel",
         "creadores": []
-    },
-    {
-        "id": 1160263,
-        "nombre": "The Amazing Spider-Man #25",
-        "numero": "25",
-        "descripcion_corta": "",
-        "descripcion": "",
-        "fecha_publicacion": "2026-03-25",
-        "imagen_url": "https://comicvine.gamespot.com/a/uploads/scale_small/11161/111615891/10022955-cover.jpg",
-        "volumen": "The Amazing Spider-Man",
-        "url_detalle": "https://comicvine.gamespot.com/the-amazing-spider-man-25/4000-1160263/",
-        "personajes": [],
-        "editorial": "Marvel",
-        "creadores": []
     }
 ]
