@@ -4,14 +4,53 @@ from src.servicios.almacenamiento import AlmacenamientoService
 from src.estructura_datos.lista_simple import ListaSimple
 from config import ITEMS_PER_PAGE
 
+
 class ComicService:
     def __init__(self):
         self.client = ComicVineClient()
 
     def obtener_comics_api(self, limit=10, offset=0):
-        data = self.client.list_issues(limit=limit, offset=offset)
-        results = data.get("results", [])
-        comics = [Comic.from_api(item) for item in results]
+        comics = []
+        ids_agregados = set()
+
+        batch_size = 20
+        current_offset = offset
+        max_batches = 5  # evita demasiadas requests
+
+        for _ in range(max_batches):
+            data = self.client.list_issues(limit=batch_size, offset=current_offset)
+            results = data.get("results", [])
+
+            if not results:
+                break
+
+            for item in results:
+                issue_id = item.get("id")
+                volumen = item.get("volume") or {}
+                volume_id = volumen.get("id")
+
+                if not issue_id or not volume_id or issue_id in ids_agregados:
+                    continue
+
+                try:
+                    volume_data = self.client.get_volume_detail(volume_id)
+                    volume_result = volume_data.get("results", {}) or {}
+                    publisher = volume_result.get("publisher") or {}
+                    nombre_editorial = (publisher.get("name") or "").strip()
+
+                    if nombre_editorial.lower() == "marvel":
+                        comic = Comic.from_api(item, editorial=nombre_editorial)
+                        comics.append(comic)
+                        ids_agregados.add(issue_id)
+
+                        if len(comics) >= limit:
+                            return comics
+
+                except Exception as e:
+                    print(f"No se pudo validar editorial para volumen {volume_id}: {e}")
+
+            current_offset += batch_size
+
         return comics
 
     def guardar_comics_desde_api(self, limit=10, offset=0):

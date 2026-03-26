@@ -53,6 +53,13 @@ class ComicVineClient:
         params = {
             "limit": limit,
             "offset": offset,
-            "sort": "date_last_updated:desc"
+            "sort": "date_last_updated:desc",
+            "field_list": "id,name,issue_number,deck,description,store_date,cover_date,image,volume,site_detail_url"
         }
         return self._get("issues", params)
+
+    def get_volume_detail(self, volume_id):
+        params = {
+            "field_list": "id,name,publisher"
+        }
+        return self._get(f"volume/4050-{volume_id}", params)

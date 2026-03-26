@@ -13,6 +13,7 @@ class Comic:
     imagen_url: str = ""
     volumen: str = ""
     url_detalle: str = ""
+    editorial: str = ""
     personajes: list[str] = field(default_factory=list)
     creadores: list[Creador] = field(default_factory=list)
 
@@ -28,6 +29,7 @@ class Comic:
             "volumen": self.volumen,
             "url_detalle": self.url_detalle,
             "personajes": self.personajes,
+            "editorial": self.editorial,
             "creadores": [creador.to_dict() for creador in self.creadores]
         }
 
@@ -40,6 +42,7 @@ class Comic:
             descripcion_corta=data.get("descripcion_corta", ""),
             descripcion=data.get("descripcion", ""),
             fecha_publicacion=data.get("fecha_publicacion", ""),
+            editorial=data.get("editorial", ""),
             imagen_url=data.get("imagen_url", ""),
             volumen=data.get("volumen", ""),
             url_detalle=data.get("url_detalle", ""),
@@ -48,19 +51,34 @@ class Comic:
         )
 
     @classmethod
-    def from_api(cls, data):
+    def from_api(cls, data, editorial=""):
         imagen = data.get("image") or {}
         volumen = data.get("volume") or {}
 
+        nombre_issue = data.get("name", "") or ""
+        nombre_volumen = volumen.get("name", "") or ""
+        numero_issue = str(data.get("issue_number", "") or "")
+        fecha = data.get("store_date", "") or data.get("cover_date", "") or ""
+
+        if nombre_issue:
+            nombre_final = nombre_issue
+        elif nombre_volumen and numero_issue:
+            nombre_final = f"{nombre_volumen} #{numero_issue}"
+        elif nombre_volumen:
+            nombre_final = nombre_volumen
+        else:
+            nombre_final = "Sin nombre"
+
         return cls(
             id=data.get("id"),
-            nombre=data.get("name", "") or "Sin nombre",
-            numero=str(data.get("issue_number", "") or ""),
+            nombre=nombre_final,
+            numero=numero_issue,
             descripcion_corta=data.get("deck", "") or "",
             descripcion=data.get("description", "") or "",
-            fecha_publicacion=data.get("store_date", "") or "",
+            fecha_publicacion=fecha,
             imagen_url=imagen.get("small_url", "") or "",
-            volumen=volumen.get("name", "") or "",
+            volumen=nombre_volumen,
+            editorial=editorial,
             url_detalle=data.get("site_detail_url", "") or "",
             personajes=[],
             creadores=[]
