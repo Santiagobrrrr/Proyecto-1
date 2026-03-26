@@ -19,7 +19,7 @@ class ComicsPage(QWidget):
         self.todos = []
         self.filtrados = []
         self.pagina_actual = 1
-        self.por_pagina = 8
+        self.por_pagina = 10
         self.items_pagina = []
 
         self._build_ui()
@@ -255,7 +255,7 @@ class PersonajesPage(QWidget):
         self.todos = []
         self.filtrados = []
         self.pagina_actual = 1
-        self.por_pagina = 8
+        self.por_pagina = 10
         self.items_pagina = []
         self.filtro_rapido = "todos"
 
