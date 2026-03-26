@@ -4,6 +4,30 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QTextBrowser, QFrame
 )
+def load_pixmap_from_url(url, width=280, height=380):
+    from PyQt6.QtGui import QPixmap
+    from PyQt6.QtCore import Qt
+    import requests
+
+    pixmap = QPixmap(width, height)
+    pixmap.fill(Qt.GlobalColor.transparent)
+
+    if not url:
+        return pixmap
+
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        pixmap.loadFromData(response.content)
+
+        return pixmap.scaled(
+            width,
+            height,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
+    except Exception:
+        return pixmap
 
 cache_imagenes = {}
 
