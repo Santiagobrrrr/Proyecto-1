@@ -1,5 +1,68 @@
 [
     {
+        "id": 31541,
+        "nombre": "Inside Angry",
+        "numero": "245",
+        "descripcion_corta": "",
+        "descripcion": "<p><em>Tony Stark, now paralyzed from the waist down, must come to terms with living his life without walking ever again. Can the once invincible Iron Man find solidarity amongst his fellow Avengers? Plus: Iron Man flies again!</em></p>",
+        "fecha_publicacion": "1989-08-01",
+        "imagen_url": "https://comicvine.gamespot.com/a/uploads/scale_small/0/4/28420-2407-31541-1-iron-man.jpg",
+        "volumen": "Iron Man",
+        "url_detalle": "https://comicvine.gamespot.com/iron-man-245-inside-angry/4000-31541/",
+        "personajes": [],
+        "editorial": "Marvel",
+        "creadores": [
+            {
+                "id": 10299,
+                "nombre": "Bob Layton",
+                "rol": "writer, cover",
+                "imagen_url": ""
+            },
+            {
+                "id": 40650,
+                "nombre": "David Michelinie",
+                "rol": "writer",
+                "imagen_url": ""
+            },
+            {
+                "id": 40629,
+                "nombre": "Howard Mackie",
+                "rol": "editor",
+                "imagen_url": ""
+            },
+            {
+                "id": 18329,
+                "nombre": "Janice Chiang",
+                "rol": "letterer",
+                "imagen_url": ""
+            },
+            {
+                "id": 14516,
+                "nombre": "Paul Becton",
+                "rol": "colorist",
+                "imagen_url": ""
+            },
+            {
+                "id": 2463,
+                "nombre": "Paul Smith",
+                "rol": "penciler",
+                "imagen_url": ""
+            },
+            {
+                "id": 25961,
+                "nombre": "Roy Richardson",
+                "rol": "inker",
+                "imagen_url": ""
+            },
+            {
+                "id": 41037,
+                "nombre": "Tom DeFalco",
+                "rol": "editor",
+                "imagen_url": ""
+            }
+        ]
+    },
+    {
         "id": 1160275,
         "nombre": "The Mud and The Stars",
         "numero": "9",
