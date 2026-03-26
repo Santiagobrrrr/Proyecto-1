@@ -4,7 +4,6 @@ from src.servicios.almacenamiento import AlmacenamientoService
 from src.estructura_datos.lista_simple import ListaSimple
 from config import ITEMS_PER_PAGE
 
-
 class ComicService:
     def __init__(self):
         self.client = ComicVineClient()
