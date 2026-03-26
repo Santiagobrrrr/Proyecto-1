@@ -55,7 +55,7 @@ class ComicsPage(QWidget):
         btn_filtrar = QPushButton("Aplicar")
         btn_filtrar.clicked.connect(self.aplicar_filtros)
 
-        btn_actualizar = QPushButton("Actualizar API")
+        btn_actualizar = QPushButton("Buscar")
         btn_actualizar.setObjectName("secondaryButton")
         btn_actualizar.clicked.connect(self.actualizar_desde_api)
 
@@ -260,7 +260,7 @@ class PersonajesPage(QWidget):
             "Editorial"
         ])
 
-        btn_buscar_api = QPushButton("Buscar API")
+        btn_buscar_api = QPushButton("Buscar")
         btn_buscar_api.clicked.connect(self.buscar_en_api)
 
         btn_filtrar = QPushButton("Aplicar")
@@ -479,7 +479,7 @@ class DashboardPage(QWidget):
         hero.setObjectName("heroTitle")
         hero.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        sub = QLabel("Interfaz inspirada en panel de cómic, con tarjetas, imágenes y filtros rápidos.")
+        sub = QLabel(" ")
         sub.setObjectName("heroSubtitle")
         sub.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
