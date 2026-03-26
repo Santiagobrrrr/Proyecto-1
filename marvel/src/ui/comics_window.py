@@ -117,7 +117,7 @@ class ComicsWindow(QWidget):
         btn_filtrar = QPushButton("Aplicar")
         btn_filtrar.clicked.connect(self.aplicar_filtros)
 
-        btn_actualizar = QPushButton("Actualizar")
+        btn_actualizar = QPushButton("Buscar")
         btn_actualizar.clicked.connect(self.actualizar_desde_api)
 
         top.addWidget(self.search_input, 2)

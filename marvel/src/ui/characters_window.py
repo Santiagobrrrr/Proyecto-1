@@ -94,10 +94,10 @@ class CharactersWindow(QWidget):
             "Editorial"
         ])
 
-        btn_buscar_api = QPushButton("Buscar en API")
+        btn_buscar_api = QPushButton("Buscar")
         btn_buscar_api.clicked.connect(self.buscar_en_api)
 
-        btn_filtrar = QPushButton("Filtrar local")
+        btn_filtrar = QPushButton("Filtrar")
         btn_filtrar.setProperty("class", "secondary")
         btn_filtrar.clicked.connect(self.aplicar_filtros)
 
