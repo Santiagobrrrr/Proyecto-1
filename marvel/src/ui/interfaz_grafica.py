@@ -39,7 +39,7 @@ class ComicsPage(QWidget):
         header = QLabel("LISTADO DE CÓMICS")
         header.setObjectName("sectionTitle")
 
-        sub = QLabel("Búsqueda, ordenamiento, paginación e imágenes estilo catálogo.")
+        sub = QLabel("Catálogo visual de Cómics.")
         sub.setObjectName("sectionSubtitle")
 
         controls = QHBoxLayout()
@@ -309,7 +309,7 @@ class PersonajesPage(QWidget):
         header = QLabel("LISTADO DE PERSONAJES")
         header.setObjectName("sectionTitle")
 
-        sub = QLabel("Incluye búsqueda y filtros rápidos por clic, aparte del buscador.")
+        sub = QLabel("Búsqueda de personajes")
         sub.setObjectName("sectionSubtitle")
 
         controls = QHBoxLayout()
@@ -603,7 +603,7 @@ class DashboardPage(QWidget):
         left_title = QLabel("Personajes")
         left_title.setObjectName("heroCardTitle")
 
-        left_desc = QLabel("Búsqueda por texto + filtros por clic.")
+        left_desc = QLabel("Búsqueda de personajes")
         left_desc.setWordWrap(True)
 
         btn_personajes = QPushButton("Entrar a personajes")
@@ -621,7 +621,7 @@ class DashboardPage(QWidget):
         right_title = QLabel("Cómics")
         right_title.setObjectName("heroCardTitle")
 
-        right_desc = QLabel("Catálogo visual con ordenamiento, paginación y detalle.")
+        right_desc = QLabel("Catálogo y búsqueda de cómics")
         right_desc.setWordWrap(True)
 
         btn_comics = QPushButton("Entrar a cómics")
